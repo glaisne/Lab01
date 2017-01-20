@@ -1,0 +1,9 @@
+Lab Process
+
+update powershellget & packagemangement
+
+get needed dsc resources
+
+Build base hard system with Server 2016 installed.
+
+build sysprep
