@@ -72,11 +72,11 @@
     {
         VhdPath =  "F:\VMs\WSUS01\WSUS01`.vhdx"
         FileDirectory =  @(MSFT_xFileDirectory {
-                SourcePath = 'F:\VMs\Sysprep\2016DataCenterEval_2.xml'
+                SourcePath = 'F:\DSCScripts\Lab01\Sysprep\2016DataCenterEval_2.xml'
                 DestinationPath = "\Windows\System32\Sysprep\Unattend.xml"
             }
             MSFT_xFileDirectory {
-                SourcePath = 'F:\DSCScripts\WSUS01\ForestRoot\Localhost.mof'
+                SourcePath = 'F:\DSCScripts\Lab01\WSUS01\Localhost.mof'
                 DestinationPath = "\Windows\System32\Configuration\Pending.mof" 
                 type    = 'File'
             }
@@ -93,8 +93,9 @@
         DependsOn = '[xVMSwitch]InternalSwitch',"[File]CopyBaseImage WSUS01","[xVhdFile]CopyUnattendedXml WSUS01"
         Ensure = 'Present'
         Generation = 2
-        MaximumMemory = 2GB
+        MaximumMemory = 4GB
         MinimumMemory = 1GB
+        StartupMemory = 2GB
         State = 'Running'
         SecureBoot = $False
         SwitchName = 'Switch-Internal','Switch-External'
@@ -136,10 +137,10 @@
         FileDirectory =  @(
 
             # Pending.mof
-            MSFT_xFileDirectory {
-                DestinationPath = "\Windows\System32\Configuration\Pending.mof" 
-                Ensure = 'Absent'
-            }
+            #MSFT_xFileDirectory {
+            #    DestinationPath = "\Windows\System32\Configuration\Pending.mof" 
+            #    Ensure = 'Absent'
+            #}
 
             # Pending.mof
             MSFT_xFileDirectory {
@@ -159,8 +160,9 @@
             
             # unattend.xml
             MSFT_xFileDirectory {
-                SourcePath = 'F:\VMs\Sysprep\2016DataCenterEval_2.xml'
+                SourcePath = 'F:\DSCScripts\Lab01\Sysprep\2016DataCenterEval_2.xml'
                 DestinationPath = "\Windows\System32\Sysprep\Unattend.xml"
+                force           = $True
             }
 
             # xActiveDirectory
@@ -202,12 +204,13 @@
     xVMHyperv "Create DC01"
     {
         Name = 'DC01'
-        VHDPath = "F:\VMs\DC01\DC01`.vhdx"
+        VHDPath = "F:\VMs\DC01\DC01.vhdx"
         DependsOn = '[xVMSwitch]InternalSwitch',"[File]CopyBaseImage DC01","[xVhdFile]CopyUnattendedXml DC01"
         Ensure = 'Present'
         Generation = 2
-        MaximumMemory = 2GB
+        MaximumMemory = 4GB
         MinimumMemory = 1GB
+        StartupMemory = 2GB
         State = 'Running'
         SecureBoot = $False
         SwitchName = 'Switch-Internal'
@@ -272,7 +275,7 @@
             
             # unattend.xml
             MSFT_xFileDirectory {
-                SourcePath = 'F:\VMs\Sysprep\2016DataCenterEval_2.xml'
+                SourcePath = 'F:\DSCScripts\Lab01\Sysprep\2016DataCenterEval_2.xml'
                 DestinationPath = "\Windows\System32\Sysprep\Unattend.xml"
             }
 
@@ -319,8 +322,9 @@
         DependsOn = '[xVMSwitch]InternalSwitch',"[File]CopyBaseImage DC02","[xVhdFile]CopyUnattendedXml DC02"
         Ensure = 'Present'
         Generation = 2
-        MaximumMemory = 2GB
+        MaximumMemory = 4GB
         MinimumMemory = 1GB
+        StartupMemory = 2GB
         State = 'Running'
         SecureBoot = $False
         SwitchName = 'Switch-Internal'
@@ -329,13 +333,13 @@
 
 
     #
-    #  Web01
+    #  App01
     #
 
     
-    File "DestinationFolder Web01"
+    File "DestinationFolder App01"
     {
-        DestinationPath = "F:\VMs\Web01\"
+        DestinationPath = "F:\VMs\App01\"
         type            = 'Directory'
         Ensure          = 'Present'
     }
@@ -345,11 +349,11 @@
     # see: https://technet.microsoft.com/en-us/library/hh304353(v=ws.10).aspx
     # or, do as I did. Run an install of 2016 in a VM
     # then overwrite the VM with the Install.WIM
-    File "CopyBaseImage Web01"
+    File "CopyBaseImage App01"
     {
         SourcePath = 'F:\VMs\Base\Server2016\2016EvalGui.vhdx'
-        DestinationPath = "F:\VMs\Web01\Web01`.vhdx"
-        DependsOn = "[File]DestinationFolder Web01"
+        DestinationPath = "F:\VMs\App01\App01`.vhdx"
+        DependsOn = "[File]DestinationFolder App01"
     }
     
 
@@ -358,56 +362,82 @@
     # CopyUnattendedXml requires 
     # Use-WindowsUnattend -Path 'H:\' -UnattendPath F:\VMs\Sysprep\Unattend.xml
     # run on the base image
-    xVhdFile "CopyUnattendedXml Web01"
+    xVhdFile "CopyUnattendedXml App01"
     {
-        VhdPath =  "F:\VMs\Web01\Web01`.vhdx"
+        VhdPath =  "F:\VMs\App01\App01`.vhdx"
         FileDirectory =  @(
             MSFT_xFileDirectory {
-                SourcePath = 'F:\VMs\Sysprep\2016DataCenterEval_2.xml'
-                DestinationPath = "\Windows\System32\Sysprep\Unattend.xml" #'\Windows\System32\Sysprep\Unattend.xml'
+                SourcePath = 'F:\DSCScripts\Lab01\Sysprep\2016DataCenterEval_2.xml'
+                DestinationPath = "\Windows\System32\Sysprep\Unattend.xml"
             }
+
+            # xComputerMangement
+            MSFT_xFileDirectory {
+                SourcePath = 'C:\Program Files\WindowsPowerShell\Modules\xComputerManagement\'
+                DestinationPath = "\Program Files\WindowsPowerShell\Modules\" 
+                type    = 'Directory'
+                Recurse = $True
+            }
+
+            # Pending.mof
+            MSFT_xFileDirectory {
+                SourcePath = 'F:\DSCScripts\Lab01\DC02\Localhost.mof'
+                DestinationPath = "\Windows\System32\Configuration\Pending.mof" 
+                force           = $True
+
+            }
+
+            # Pending.Meta.mof
+            MSFT_xFileDirectory {
+                SourcePath = 'F:\DSCScripts\Lab01\DC02\Localhost.meta.mof'
+                DestinationPath = "\Windows\System32\Configuration\metaconfig.mof" 
+                force           = $True
+
+            }
+
 <#
             MSFT_xFileDirectory {
-                SourcePath = 'F:\DSCScripts\Lab01\Web01\Sources\'
+                SourcePath = 'F:\DSCScripts\Lab01\App01\Sources\'
                 DestinationPath = "\" 
                 type    = 'Directory'
                 Recurse = $True
             }
 
             MSFT_xFileDirectory {
-                SourcePath = 'F:\DSCScripts\Lab01\Web01\WebSite\'
+                SourcePath = 'F:\DSCScripts\Lab01\App01\WebSite\'
                 DestinationPath = "\WebSite\" 
                 type    = 'Directory'
                 Recurse = $True
             }
 
             MSFT_xFileDirectory {
-                SourcePath = 'F:\DSCScripts\Lab01\Web01\scripts\'
+                SourcePath = 'F:\DSCScripts\Lab01\App01\scripts\'
                 DestinationPath = "\Scripts\"
                 type = 'directory'
                 Ensure = 'Present'
             }
 #>
         )
-        DependsOn = "[File]CopyBaseImage Web01"
+        DependsOn = "[File]CopyBaseImage App01"
     
     }
 
 
-    xVMHyperv "Create Web01"
+    xVMHyperv "Create App01"
     {
-        Name = 'Web01'
-        VHDPath = "F:\VMs\Web01\Web01`.vhdx"
-        DependsOn = '[xVMSwitch]InternalSwitch',"[File]CopyBaseImage Web01","[xVhdFile]CopyUnattendedXml Web01"
+        Name = 'App01'
+        VHDPath = "F:\VMs\App01\App01`.vhdx"
+        DependsOn = '[xVMSwitch]InternalSwitch',"[File]CopyBaseImage App01","[xVhdFile]CopyUnattendedXml App01"
         Ensure = 'Present'
         Generation = 2
-        MaximumMemory = 2GB
+        MaximumMemory = 4GB
         MinimumMemory = 1GB
-        State = 'Off'
+        StartupMemory = 2GB
+        State = 'Running'
         SecureBoot = $False
         SwitchName = 'Switch-Internal'
         RestartIfNeeded = $True
     }
 }
 
-Lab01 -ConfigurationData .\Lab01_Data.psd1
+Lab01 # -ConfigurationData .\Lab01_Data.psd1

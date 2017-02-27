@@ -7,3 +7,89 @@ get needed dsc resources
 Build base hard system with Server 2016 installed.
 
 build sysprep
+
+
+=====================================================================
+Making the base disk
+----------------------------------------
+Disk Management
+Action \ Create VHD
+ - location Base Directory vhdx
+ - 40 GB
+ - VHDX
+ - Dynamically expanding
+ - OK
+cmd (as administrator)
+ - Diskpart
+ - identify the new disk
+ - run through the script on the correct disk
+   https://technet.microsoft.com/en-us/library/hh304353(v=ws.10).aspx
+   "Recommended Configuration: System Recovery"
+ - Remove the R: assigned drive letter.
+
+Install Windows
+----------------------------
+Powershell as administrator
+ - Mount-DiskImage ...
+ - Get-WindowsImage -imagepath ...
+ - Expand-WindowsImage -ImagePath g:\sources\install.wim -ApplyPath W:\ -Index 4
+
+Make a Sysprep
+----------------------------
+
+
+find & install DSCResources
+----------------------------
+ - Find-DscResource - find DSC resources in the PowerShell Gallery (powershellgallery.com)
+ - Install-Module "<DSCResourceName>" - install the DSC resource from the PowerShell Gallery.
+ - Get-DscResource - List DSC resources installed on the local computer.
+
+DSC Resources we need
+---------------------------
+ - PSDesiredStateConfiguration - DSC
+ - xHyper-V - Configure and manage Hyper-V host
+ - xActiveDirectory - Configure and manage Active Directory
+ - xNetworking - Configure and manage 
+ - xPendingReboot - Allows DSC to reboot the system if it is required.
+
+Getting DSC Resources
+---------------------------
+PowerShellGallery, PowerShellGet & Packagemanagement
+ - Find-DSCResource
+ - Install-module
+ - Get-DSCResource
+What's the 'x' or 'c' for ?
+ - 'x' = 'Experamental' used by Microsoft
+ - 'c' = 'Community' Microsoft DSC resources modified by the comunity (!Micorosoft)
+
+Anatomy of a DSC script
+-----------------------------
+https://msdn.microsoft.com/en-us/PowerShell/DSC/configurations
+Configuration Block
+  zero or more parameters
+  One or more Node Block
+    One or more Resource Blocks
+configuration <ConfigurationName>
+{
+  Node <NodeName>
+  {
+    Import-DscResource -ModuleName PSDesiredStateConfiguration
+
+    WindowsFeature <WinFeatureName>
+    {
+        Name = 'Hyper-V'
+        Ensure = 'Present'
+        IncludeAllSubFeature = $True
+    }
+
+    WindowsFeature <FeatureName>
+    {
+        Name = 'RSAT-Hyper-V-Tools'
+        Ensure = 'Present'
+        IncludeAllSubFeature = $true
+        DependsOn = '[WindowsFeature]<WinFeatureName>'
+    }
+  }
+}
+<ConfigurationName>
+
