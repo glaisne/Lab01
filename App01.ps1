@@ -83,4 +83,4 @@ configuration App01
     }
 }
 
-App01 -ConfigurationData $ConfigurationData -Credentail $([pscredential]::new('Administrator', $(ConvertTo-SecureString -String 'Pa55w0rd!101' -AsPlainText -Force))) -Domain $DomainName
+App01 -ConfigurationData $ConfigurationData -DomainCredentials $([pscredential]::new('Administrator', $(ConvertTo-SecureString -String 'Pa55w0rd!101' -AsPlainText -Force)))

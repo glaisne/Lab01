@@ -65,10 +65,10 @@ configuration DC02
         xWaitForADDomain DscForestWait
         {
             DomainName = $domainName
-            DomainUserCredential = $DomainCredentials
+            #DomainUserCredential = $DomainCredentials
             RetryCount = 20
-            RetryIntervalSec = 60
-            RebootRetryCount = 5
+            RetryIntervalSec = (5 * 60)
+            # RebootRetryCount = 5
             # DependsOn = "[xIpAddress]IPAddress", "[xDnsServerAddress]DnsServerAddress", "[xDefaultGatewayAddress]SetDefaultGateway"
         }
 
