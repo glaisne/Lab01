@@ -21,6 +21,7 @@ configuration DC02
     Import-DscResource -ModuleName xActiveDirectory
     Import-DscResource -ModuleName xNetworking
     Import-DscResource -ModuleName xPendingReboot
+    Import-DscResource -ModuleName xComputerManagement
 
     $domainName        = 'one.com'
 
@@ -60,6 +61,11 @@ configuration DC02
             InterfaceAlias = 'Ethernet'
             ComponentId = 'ms_tcpip6'
             State = 'Disabled'
+        }
+
+        xComputer Rename
+        {
+            Name = "DC02"
         }
    
         xWaitForADDomain DscForestWait

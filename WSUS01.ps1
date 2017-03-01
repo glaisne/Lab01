@@ -1,8 +1,23 @@
-﻿configuration WSUS01
+﻿$ConfigurationData = @{
+    AllNodes = @(
+        @{
+            NodeName                    = 'Localhost'
+            PSDscAllowPlainTextPassword = $True
+        }
+    )
+}
+
+
+Configuration WSUS01
 {
     Import-DscResource -ModuleName PSDesiredStateConfiguration
     Import-DscResource -ModuleName xNetworking
+    Import-DscResource -moduleName xComputerManagement
 
+    LocalConfigurationManager
+    {
+        RebootNodeIfNeeded = $True
+    } 
 
     WindowsFeature UpdateServices
     {
@@ -35,6 +50,11 @@
         PrefixLength    = 24
         AddressFamily   = "IPv4"
     }
+
+    xComputer Rename
+    {
+        Name = "WSUS01"
+    }
 }
 
-WSUS01
+WSUS01 -ConfigurationData $ConfigurationData

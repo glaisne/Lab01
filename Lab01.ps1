@@ -5,43 +5,9 @@
             PSDscAllowPlainTextPassword = $True
             MaximumMemory               = 4GB
             MinimumMemory               = 1GB
-            StartupMemory               = 2GB
-            SecureBoot                  = $False
+            SecureBoot                  = $True
             RestartIfNeeded             = $True
         }
-<#
-        @{
-            NodeName          = 'Localhost'
-            Role              = 'WSUS'
-            DestinationFolder = "F:\VMs\WSUS01\"
-            DestinationPath   = "F:\VMs\WSUS01\WSUS01.vhdx"
-            SwitchName = 'Switch-Internal','Switch-External'
-        }
-
-        @{
-            NodeName          = 'Localhost'
-            Role              = 'ForestRoot'
-            DestinationFolder = "F:\VMs\DC01\"
-            DestinationPath   = "F:\VMs\DC01\DC01.vhdx"
-            SwitchName = 'Switch-Internal'
-        }
-
-        @{
-            NodeName          = 'Localhost'
-            Role              = 'DomainController'
-            DestinationFolder = "F:\VMs\DC02\"
-            DestinationPath   = "F:\VMs\DC02\DC02.vhdx"
-            SwitchName = 'Switch-Internal'
-        }
-
-        @{
-            NodeName          = 'Localhost'
-            Role              = 'MemberServer'
-            DestinationFolder = "F:\VMs\App01\"
-            DestinationPath   = "F:\VMs\App01\App01.vhdx"
-            SwitchName = 'Switch-Internal'
-        }
-#>
     )
 }
 
@@ -131,9 +97,33 @@ configuration Lab01
                     type    = 'File'
                 }
 
+                # Pending.Meta.mof
+                MSFT_xFileDirectory {
+                    SourcePath = 'F:\DSCScripts\Lab01\WSUS01\Localhost.meta.mof'
+                    DestinationPath = "\Windows\System32\Configuration\metaconfig.mof" 
+                    force           = $True
+
+                }
+
+                # xComputerMangement
+                MSFT_xFileDirectory {
+                    SourcePath = 'C:\Program Files\WindowsPowerShell\Modules\xComputerManagement\'
+                    DestinationPath = "\Program Files\WindowsPowerShell\Modules\" 
+                    type    = 'Directory'
+                    Recurse = $True
+                }
+
                 # PoshWSUS
                 MSFT_xFileDirectory {
                     SourcePath = 'F:\repositories\PoshWSUS\'
+                    DestinationPath = "\Program Files\WindowsPowerShell\Modules\" 
+                    type    = 'Directory'
+                    Recurse = $True
+                }
+
+                # xNetworking
+                MSFT_xFileDirectory {
+                    SourcePath = 'C:\Program Files\WindowsPowerShell\Modules\xNetworking\'
                     DestinationPath = "\Program Files\WindowsPowerShell\Modules\" 
                     type    = 'Directory'
                     Recurse = $True
@@ -153,7 +143,7 @@ configuration Lab01
             Generation      = 2
             MaximumMemory   = $Node.MaximumMemory
             MinimumMemory   = $Node.MinimumMemory
-            StartupMemory   = $Node.StartupMemory
+            StartupMemory   = 2GB
             State           = 'Running'
             SecureBoot      = $Node.SecureBoot
             SwitchName      = 'Switch-Internal','Switch-External'
@@ -268,7 +258,7 @@ configuration Lab01
             Generation = 2
             MaximumMemory = $Node.MaximumMemory
             MinimumMemory = $Node.MinimumMemory
-            StartupMemory = $Node.StartupMemory
+            StartupMemory = 2GB
             State = 'Running'
             SecureBoot = $Node.SecureBoot
             SwitchName = 'Switch-Internal'
@@ -382,7 +372,7 @@ configuration Lab01
             Generation = 2
             MaximumMemory = $Node.MaximumMemory
             MinimumMemory = $Node.MinimumMemory
-            StartupMemory = $Node.StartupMemory
+            StartupMemory = 2GB
             State = 'Running'
             SecureBoot = $Node.SecureBoot
             SwitchName = 'Switch-Internal'
@@ -439,7 +429,7 @@ configuration Lab01
 
                 # Pending.mof
                 MSFT_xFileDirectory {
-                    SourcePath = 'F:\DSCScripts\Lab01\DC02\Localhost.mof'
+                    SourcePath = 'F:\DSCScripts\Lab01\App01\Localhost.mof'
                     DestinationPath = "\Windows\System32\Configuration\Pending.mof" 
                     force           = $True
 
@@ -447,10 +437,26 @@ configuration Lab01
 
                 # Pending.Meta.mof
                 MSFT_xFileDirectory {
-                    SourcePath = 'F:\DSCScripts\Lab01\DC02\Localhost.meta.mof'
+                    SourcePath = 'F:\DSCScripts\Lab01\App01\Localhost.meta.mof'
                     DestinationPath = "\Windows\System32\Configuration\metaconfig.mof" 
                     force           = $True
 
+                }
+
+                # xNetworking
+                MSFT_xFileDirectory {
+                    SourcePath = 'C:\Program Files\WindowsPowerShell\Modules\xNetworking\'
+                    DestinationPath = "\Program Files\WindowsPowerShell\Modules\" 
+                    type    = 'Directory'
+                    Recurse = $True
+                }
+
+                # xActiveDirectory
+                MSFT_xFileDirectory {
+                    SourcePath = 'C:\Program Files\WindowsPowerShell\Modules\xActiveDirectory\'
+                    DestinationPath = "\Program Files\WindowsPowerShell\Modules\" 
+                    type    = 'Directory'
+                    Recurse = $True
                 }
 
             <#
@@ -490,7 +496,7 @@ configuration Lab01
             Generation = 2
             MaximumMemory = $Node.MaximumMemory
             MinimumMemory = $Node.MinimumMemory
-            StartupMemory = $Node.StartupMemory
+            StartupMemory = 1GB
             State = 'Running'
             SecureBoot = $Node.SecureBoot
             SwitchName = 'Switch-Internal'

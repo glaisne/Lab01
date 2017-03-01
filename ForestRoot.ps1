@@ -21,7 +21,7 @@ configuration ForestRoot
     Import-DscResource -ModuleName xActiveDirectory
     Import-DscResource -ModuleName xNetworking
     Import-DscResource -ModuleName xPendingReboot
-    #Import-DscResource -moduleName xComputerManagement
+    Import-DscResource -moduleName xComputerManagement
 
     $domainName        = 'one.com'
 
@@ -61,6 +61,11 @@ configuration ForestRoot
             InterfaceAlias = 'Ethernet'
             ComponentId = 'ms_tcpip6'
             State = 'Disabled'
+        }
+
+        xComputer Rename
+        {
+            Name = "DC01"
         }
 
 
