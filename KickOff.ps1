@@ -1,4 +1,4 @@
-﻿& $PSScriptRoot\ForestRoot.ps1
+& $PSScriptRoot\ForestRoot.ps1
 & $PSScriptRoot\DC02.ps1
 & $PSScriptRoot\WSUS01.ps1
 & $PSScriptRoot\App01.ps1

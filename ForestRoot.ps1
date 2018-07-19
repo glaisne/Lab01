@@ -1,4 +1,4 @@
-﻿$ConfigurationData = @{
+$ConfigurationData = @{
     AllNodes = @(
         @{
             NodeName                    = 'Localhost'
@@ -17,11 +17,10 @@ configuration ForestRoot
     )
 
 
-    Import-DscResource -ModuleName PSDesiredStateConfiguration
-    Import-DscResource -ModuleName xActiveDirectory
-    Import-DscResource -ModuleName xNetworking
-    Import-DscResource -ModuleName xPendingReboot
-    Import-DscResource -moduleName xComputerManagement
+    Import-DscResource -ModuleName @{ModuleName="PSDesiredStateConfiguration";ModuleVersion="1.1"}
+    Import-DscResource -ModuleName @{ModuleName="xActiveDirectory";ModuleVersion="2.16.0.0"}
+    Import-DscResource -ModuleName @{ModuleName="xNetworking";ModuleVersion="5.3.0.0"
+    Import-DscResource -ModuleName @{ModuleName="xComputerManagement";ModuleVersion="3.1.0.0"}
 
     $domainName        = 'one.com'
 
@@ -37,7 +36,6 @@ configuration ForestRoot
         {
             IPAddress       = "10.10.10.10"
             InterfaceAlias  = "Ethernet"
-            PrefixLength    = 24
             AddressFamily   = "IPv4"
         }
         

@@ -1,4 +1,4 @@
-﻿# based off of
+# based off of
 # http://rakhesh.com/windows/notes-of-uefi-gpt-uefi-boot-process-disk-partitions-and-hyper-v-differencing-disks-with-a-generation-2-vm/
 
 $NewVHDFullName = "$PSScriptRoot\2016EvalGui_$(get-date -f 'MMddyyyyHHmm')`.vhdx"

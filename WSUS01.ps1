@@ -1,4 +1,4 @@
-﻿$ConfigurationData = @{
+$ConfigurationData = @{
     AllNodes = @(
         @{
             NodeName                    = 'Localhost'
@@ -11,8 +11,8 @@
 Configuration WSUS01
 {
     Import-DscResource -ModuleName PSDesiredStateConfiguration
-    Import-DscResource -ModuleName xNetworking
-    Import-DscResource -moduleName xComputerManagement
+    Import-DscResource -ModuleName @{ModuleName="xNetworking";ModuleVersion="5.3.0.0"}
+    Import-DscResource -ModuleName @{ModuleName="xComputerManagement";ModuleVersion="3.1.0.0"}
 
     LocalConfigurationManager
     {
@@ -47,7 +47,6 @@ Configuration WSUS01
     {
         IPAddress       = "10.10.10.5"
         InterfaceAlias  = "Ethernet 2"
-        PrefixLength    = 24
         AddressFamily   = "IPv4"
     }
 
