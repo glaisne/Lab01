@@ -1,7 +1,13 @@
+#Requires -Module @{ModuleName="xHyper-V";ModuleVersion="3.12.0.0"}
+#Requires -Module @{ModuleName="xComputerManagement";ModuleVersion="4.1.0.0"}
+#Requires -Module @{ModuleName="xActiveDirectory";ModuleVersion="2.21.0.0"}
+#Requires -Module @{ModuleName="xNetworking";ModuleVersion="5.7.0.0"}
+
+
 & $PSScriptRoot\ForestRoot.ps1
-& $PSScriptRoot\DC02.ps1
+#& $PSScriptRoot\DC02.ps1
 & $PSScriptRoot\WSUS01.ps1
-& $PSScriptRoot\App01.ps1
+#& $PSScriptRoot\App01.ps1
 & $PSScriptRoot\Lab01.ps1
 
 $SourcePath = 'F:\VMs\Base\Server2016\2016EvalGui.vhdx'

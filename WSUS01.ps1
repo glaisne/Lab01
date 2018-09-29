@@ -10,9 +10,9 @@ $ConfigurationData = @{
 
 Configuration WSUS01
 {
-    Import-DscResource -ModuleName PSDesiredStateConfiguration
-    Import-DscResource -ModuleName @{ModuleName="xNetworking";ModuleVersion="5.3.0.0"}
-    Import-DscResource -ModuleName @{ModuleName="xComputerManagement";ModuleVersion="3.1.0.0"}
+    Import-DscResource -ModuleName @{ModuleName="PSDesiredStateConfiguration";ModuleVersion="1.1"}
+    Import-DscResource -ModuleName @{ModuleName="xNetworking";ModuleVersion="5.7.0.0"
+    Import-DscResource -ModuleName @{ModuleName="xComputerManagement";ModuleVersion="4.1.0.0"}
 
     LocalConfigurationManager
     {
