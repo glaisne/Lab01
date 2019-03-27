@@ -10,13 +10,16 @@ $ConfigurationData = @{
 
 Configuration WSUS01
 {
-    Import-DscResource -ModuleName @{ModuleName="PSDesiredStateConfiguration";ModuleVersion="1.1"}
-    Import-DscResource -ModuleName @{ModuleName="xNetworking";ModuleVersion="5.7.0.0"
+    Import-DscResource -ModuleName 'PSDscResources'
+    Import-DscResource -ModuleName @{ModuleName="xNetworking";ModuleVersion="5.7.0.0"}
     Import-DscResource -ModuleName @{ModuleName="xComputerManagement";ModuleVersion="4.1.0.0"}
 
     LocalConfigurationManager
     {
+        ActionAfterReboot = 'ContinueConfiguration'
+        ConfigurationMode = 'ApplyOnly'
         RebootNodeIfNeeded = $True
+        AllowModuleOverwrite = $true
     } 
 
     WindowsFeature UpdateServices

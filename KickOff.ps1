@@ -5,9 +5,9 @@
 
 
 & $PSScriptRoot\ForestRoot.ps1
-#& $PSScriptRoot\DC02.ps1
+& $PSScriptRoot\DC02.ps1
 & $PSScriptRoot\WSUS01.ps1
-#& $PSScriptRoot\App01.ps1
+& $PSScriptRoot\App01.ps1
 & $PSScriptRoot\Lab01.ps1
 
 $SourcePath = 'F:\VMs\Base\Server2016\2016EvalGui.vhdx'

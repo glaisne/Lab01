@@ -1,7 +1,7 @@
 configuration DeleteLab01
 {
-    Import-DscResource -ModuleName PSDesiredStateConfiguration
-    Import-DscResource -ModuleName @{ModuleName="xHyper-V";ModuleVersion="3.9.0.0"}
+    Import-DscResource -ModuleName 'PSDscResources'
+    Import-DscResource -ModuleName @{ModuleName="xHyper-V";ModuleVersion="3.12.0.0"}
 
     $VMRootPath = "C:\VMs"
 

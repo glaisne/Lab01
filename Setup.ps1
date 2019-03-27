@@ -47,7 +47,7 @@ foreach ($DSCResource in $NeededDSCResources)
 
     dir *.ps1 -recurse | % {Replace-InFile -Path $_.FullName -Find "^ *import-DscResource\s*-ModuleName.*$DSCResource.*$" -Replace $importModuleLine}
 
-    # SourcePath = 'C:\Program Files\WindowsPowerShell\Modules\xActiveDirectory\2.16.0.0\.16.0.0\
+    # SourcePath = 'C:\Program Files\WindowsPowerShell\Modules\xActiveDirectory\2.21.0.0\.16.0.0\.16.0.0\
     dir *.ps1 -recurse | % {Replace-InFile -Path $_.FullName -Find "C:\\Program Files\\WindowsPowerShell\\Modules\\$DSCResource\\[a-z0-9-_]*" -Replace "$(split-path $module.path)\"}
 }
 

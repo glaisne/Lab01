@@ -17,10 +17,11 @@ configuration ForestRoot
     )
 
 
-    Import-DscResource -ModuleName @{ModuleName="PSDesiredStateConfiguration";ModuleVersion="1.1"}
+    Import-DscResource -ModuleName 'PSDscResources'
     Import-DscResource -ModuleName @{ModuleName="xActiveDirectory";ModuleVersion="2.21.0.0"}
-    Import-DscResource -ModuleName @{ModuleName="xNetworking";ModuleVersion="5.7.0.0"
+    Import-DscResource -ModuleName @{ModuleName="xNetworking";ModuleVersion="5.7.0.0"}
     Import-DscResource -ModuleName @{ModuleName="xComputerManagement";ModuleVersion="4.1.0.0"}
+    Import-DscResource -ModuleName @{ModuleName="xPendingReboot";ModuleVersion="0.4.0.0"}
 
     $domainName        = 'one.com'
 
@@ -29,7 +30,10 @@ configuration ForestRoot
 
         LocalConfigurationManager
         {
+            ActionAfterReboot = 'ContinueConfiguration'
+            ConfigurationMode = 'ApplyOnly'
             RebootNodeIfNeeded = $True
+            AllowModuleOverwrite = $true
         } 
 
         xIpAddress IPAddress
@@ -132,4 +136,4 @@ configuration ForestRoot
     }
 }
 
-ForestRoot -ConfigurationData $ConfigurationData -DomainCredentials $([pscredential]::new('Administrator', $(ConvertTo-SecureString -String 'Pa55w0rd!101' -AsPlainText -Force)))
+ForestRoot -ConfigurationData $ConfigurationData -DomainCredentials $([pscredential]::new('Administrator', $(ConvertTo-SecureString -String 'Password!101' -AsPlainText -Force)))

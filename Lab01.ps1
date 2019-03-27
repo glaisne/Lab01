@@ -15,44 +15,48 @@ $ConfigurationData = @{
 
 configuration Lab01
 {
-    Import-DscResource -ModuleName PSDesiredStateConfiguration
+    param (
+        $RootFolder = 'C:\github\lab01'
+    )
+
+    Import-DscResource -ModuleName 'PSDscResources'
     Import-DscResource -ModuleName @{ModuleName="xHyper-V";ModuleVersion="3.12.0.0"}
 
     Node Localhost
     {
     
-        WindowsFeature HyperV
-        {
-            Name = 'Hyper-V'
-            Ensure = 'Present'
-            IncludeAllSubFeature = $True
-        }
+        # WindowsFeature HyperV
+        # {
+        #     Name = 'Hyper-V'
+        #     Ensure = 'Present'
+        #     IncludeAllSubFeature = $True
+        # }
 
-        WindowsFeature RSATHyperVTools
-        {
-            Name = 'RSAT-Hyper-V-Tools'
-            Ensure = 'Present'
-            IncludeAllSubFeature = $true
-            DependsOn = '[WindowsFeature]HyperV'
-        }
+        # WindowsFeature RSATHyperVTools
+        # {
+        #     Name = 'RSAT-Hyper-V-Tools'
+        #     Ensure = 'Present'
+        #     IncludeAllSubFeature = $true
+        #     DependsOn = '[WindowsFeature]HyperV'
+        # }
 
-        xVMSwitch InternalSwitch
-        {
-            Name = 'Switch-Internal'
-            Ensure = 'Present'
-            type = 'Internal'
-            DependsOn = '[WindowsFeature]HyperV'
-        }
+        # xVMSwitch InternalSwitch
+        # {
+        #     Name = 'Switch-Internal'
+        #     Ensure = 'Present'
+        #     type = 'Internal'
+        #     DependsOn = '[WindowsFeature]HyperV'
+        # }
 
-        xVMSwitch ExternalSwitch
-        {
-            Name = 'Switch-External'
-            Ensure = 'Present'
-            type = 'External'
-            AllowManagementOS = $True
-            DependsOn = '[WindowsFeature]HyperV'
-            NetAdapterName = 'Wi-Fi'
-        }
+        # xVMSwitch ExternalSwitch
+        # {
+        #     Name = 'Switch-External'
+        #     Ensure = 'Present'
+        #     type = 'External'
+        #     AllowManagementOS = $True
+        #     DependsOn = '[WindowsFeature]HyperV'
+        #     NetAdapterName = 'Wi-Fi'
+        # }
 
 
         #
@@ -74,7 +78,7 @@ configuration Lab01
         # then overwrite the VM with the Install.WIM
         File "CopyBaseImage WSUS01"
         {
-            SourcePath = "C:\VMs\Base\Server2016\2016EvalGui.vhdx"
+            SourcePath = "C:\VMs\Source\Base\Server2016\2016EvalGui.vhdx"
             DestinationPath = "C:\VMs\WSUS01\WSUS01.vhdx"
             DependsOn = "[File]DestinationFolder WSUS01"
         }
@@ -93,14 +97,14 @@ configuration Lab01
                     DestinationPath = "\Windows\System32\Sysprep\Unattend.xml"
                 }
                 MSFT_xFileDirectory {
-                    SourcePath = 'F:\DSCScripts\Lab01\WSUS01\Localhost.mof'
+                    SourcePath = "$RootFolder\WSUS01\Localhost.mof"
                     DestinationPath = "\Windows\System32\Configuration\Pending.mof" 
                     type    = 'File'
                 }
 
                 # Pending.Meta.mof
                 MSFT_xFileDirectory {
-                    SourcePath = 'F:\DSCScripts\Lab01\WSUS01\Localhost.meta.mof'
+                    SourcePath = "$RootFolder\WSUS01\Localhost.meta.mof"
                     DestinationPath = "\Windows\System32\Configuration\metaconfig.mof" 
                     force           = $True
 
@@ -108,7 +112,7 @@ configuration Lab01
 
                 # xComputerMangement
                 MSFT_xFileDirectory {
-                    SourcePath = 'C:\Program Files\WindowsPowerShell\Modules\xComputerManagement\3.1.0.0\'
+                    SourcePath = 'C:\Program Files\WindowsPowerShell\Modules\xComputerManagement\4.1.0.0\.1.0.0\'
                     DestinationPath = "\Program Files\WindowsPowerShell\Modules\" 
                     type    = 'Directory'
                     Recurse = $True
@@ -124,7 +128,7 @@ configuration Lab01
 
                 # xNetworking
                 MSFT_xFileDirectory {
-                    SourcePath = 'C:\Program Files\WindowsPowerShell\Modules\xNetworking\5.3.0.0\'
+                    SourcePath = 'C:\Program Files\WindowsPowerShell\Modules\xNetworking\5.7.0.0\.3.0.0\'
                     DestinationPath = "\Program Files\WindowsPowerShell\Modules\" 
                     type    = 'Directory'
                     Recurse = $True
@@ -139,7 +143,7 @@ configuration Lab01
         {
             Name            = 'WSUS01'
             VHDPath         = "C:\VMs\WSUS01\WSUS01`.vhdx"
-            DependsOn       = "[File]CopyBaseImage WSUS01","[xVhdFile]CopyUnattendedXml WSUS01", '[xVMSwitch]InternalSwitch'
+            DependsOn       = "[File]CopyBaseImage WSUS01","[xVhdFile]CopyUnattendedXml WSUS01" #, '[xVMSwitch]InternalSwitch'
             Ensure          = 'Present'
             Generation      = 2
             MaximumMemory   = $Node.MaximumMemory
@@ -171,7 +175,7 @@ configuration Lab01
         # then overwrite the VM with the Install.WIM
         File "CopyBaseImage DC01"
         {
-            SourcePath = "C:\VMs\Base\Server2016\2016EvalGui.vhdx"
+            SourcePath = "C:\VMs\Source\Base\Server2016\2016EvalGui.vhdx"
             DestinationPath = "C:\VMs\DC01\DC01.vhdx"
             DependsOn = "[File]DestinationFolder DC01"
         }
@@ -193,7 +197,7 @@ configuration Lab01
 
                 # Pending.mof
                 MSFT_xFileDirectory {
-                    SourcePath = 'F:\DSCScripts\Lab01\ForestRoot\Localhost.mof'
+                    SourcePath = "$RootFolder\ForestRoot\Localhost.mof"
                     DestinationPath = "\Windows\System32\Configuration\Pending.mof" 
                     force           = $True
 
@@ -201,7 +205,7 @@ configuration Lab01
 
                 # Pending.Meta.mof
                 MSFT_xFileDirectory {
-                    SourcePath = 'F:\DSCScripts\Lab01\ForestRoot\Localhost.meta.mof'
+                    SourcePath = "$RootFolder\ForestRoot\Localhost.meta.mof"
                     DestinationPath = "\Windows\System32\Configuration\metaconfig.mof" 
                     force           = $True
 
@@ -216,7 +220,7 @@ configuration Lab01
 
                 # xActiveDirectory
                 MSFT_xFileDirectory {
-                    SourcePath = 'C:\Program Files\WindowsPowerShell\Modules\xActiveDirectory\2.16.0.0\'
+                    SourcePath = 'C:\Program Files\WindowsPowerShell\Modules\xActiveDirectory\2.21.0.0\.16.0.0\'
                     DestinationPath = "\Program Files\WindowsPowerShell\Modules\" 
                     type    = 'Directory'
                     Recurse = $True
@@ -224,7 +228,7 @@ configuration Lab01
 
                 # xNetworking
                 MSFT_xFileDirectory {
-                    SourcePath = 'C:\Program Files\WindowsPowerShell\Modules\xNetworking\5.3.0.0\'
+                    SourcePath = 'C:\Program Files\WindowsPowerShell\Modules\xNetworking\5.7.0.0\.3.0.0\'
                     DestinationPath = "\Program Files\WindowsPowerShell\Modules\" 
                     type    = 'Directory'
                     Recurse = $True
@@ -232,7 +236,7 @@ configuration Lab01
 
                 # xComputerMangement
                 MSFT_xFileDirectory {
-                    SourcePath = 'C:\Program Files\WindowsPowerShell\Modules\xComputerManagement\3.1.0.0\'
+                    SourcePath = 'C:\Program Files\WindowsPowerShell\Modules\xComputerManagement\4.1.0.0\.1.0.0\'
                     DestinationPath = "\Program Files\WindowsPowerShell\Modules\" 
                     type    = 'Directory'
                     Recurse = $True
@@ -240,7 +244,7 @@ configuration Lab01
 
                 # xComputerMangement
                 MSFT_xFileDirectory {
-                    SourcePath = 'C:\Program Files\WindowsPowerShell\Modules\xPendingReboot\0.3.0.0\'
+                    SourcePath = 'C:\Program Files\WindowsPowerShell\Modules\xPendingReboot\0.4.0.0\.3.0.0\'
                     DestinationPath = "\Program Files\WindowsPowerShell\Modules\" 
                     type    = 'Directory'
                     Recurse = $True
@@ -254,7 +258,7 @@ configuration Lab01
         {
             Name = 'DC01'
             VHDPath = "C:\VMs\DC01\DC01.vhdx"
-            DependsOn = "[File]CopyBaseImage DC01","[xVhdFile]CopyUnattendedXml DC01", '[xVMSwitch]InternalSwitch'
+            DependsOn = "[File]CopyBaseImage DC01","[xVhdFile]CopyUnattendedXml DC01" #, '[xVMSwitch]InternalSwitch'
             Ensure = 'Present'
             Generation = 2
             MaximumMemory = $Node.MaximumMemory
@@ -286,7 +290,7 @@ configuration Lab01
         # then overwrite the VM with the Install.WIM
         File "CopyBaseImage DC02"
         {
-            SourcePath = "C:\VMs\Base\Server2016\2016EvalGui.vhdx"
+            SourcePath = "C:\VMs\Source\Base\Server2016\2016EvalGui.vhdx"
             DestinationPath = "C:\VMs\DC02\DC02.vhdx"
             DependsOn = "[File]DestinationFolder DC02"
         }
@@ -308,7 +312,7 @@ configuration Lab01
 
                 # Pending.mof
                 MSFT_xFileDirectory {
-                    SourcePath = 'F:\DSCScripts\Lab01\DC02\Localhost.mof'
+                    SourcePath = "$RootFolder\DC02\Localhost.mof"
                     DestinationPath = "\Windows\System32\Configuration\Pending.mof" 
                     force           = $True
 
@@ -316,7 +320,7 @@ configuration Lab01
 
                 # Pending.Meta.mof
                 MSFT_xFileDirectory {
-                    SourcePath = 'F:\DSCScripts\Lab01\DC02\Localhost.meta.mof'
+                    SourcePath = "$RootFolder\DC02\Localhost.meta.mof"
                     DestinationPath = "\Windows\System32\Configuration\metaconfig.mof" 
                     force           = $True
 
@@ -339,7 +343,7 @@ configuration Lab01
 
                 # xNetworking
                 MSFT_xFileDirectory {
-                    SourcePath = 'C:\Program Files\WindowsPowerShell\Modules\xNetworking\5.3.0.0\'
+                    SourcePath = 'C:\Program Files\WindowsPowerShell\Modules\xNetworking\5.7.0.0\.3.0.0\'
                     DestinationPath = "\Program Files\WindowsPowerShell\Modules\" 
                     type    = 'Directory'
                     Recurse = $True
@@ -347,7 +351,7 @@ configuration Lab01
 
                 # xComputerMangement
                 MSFT_xFileDirectory {
-                    SourcePath = 'C:\Program Files\WindowsPowerShell\Modules\xComputerManagement\3.1.0.0\'
+                    SourcePath = 'C:\Program Files\WindowsPowerShell\Modules\xComputerManagement\4.1.0.0\.1.0.0\'
                     DestinationPath = "\Program Files\WindowsPowerShell\Modules\" 
                     type    = 'Directory'
                     Recurse = $True
@@ -355,7 +359,7 @@ configuration Lab01
 
                 # xComputerMangement
                 MSFT_xFileDirectory {
-                    SourcePath = 'C:\Program Files\WindowsPowerShell\Modules\xPendingReboot\0.3.0.0\'
+                    SourcePath = 'C:\Program Files\WindowsPowerShell\Modules\xPendingReboot\0.4.0.0\.3.0.0\'
                     DestinationPath = "\Program Files\WindowsPowerShell\Modules\" 
                     type    = 'Directory'
                     Recurse = $True
@@ -369,7 +373,7 @@ configuration Lab01
         {
             Name = 'DC02'
             VHDPath = "C:\VMs\DC02\DC02`.vhdx"
-            DependsOn = "[File]CopyBaseImage DC02","[xVhdFile]CopyUnattendedXml DC02", '[xVMSwitch]InternalSwitch'
+            DependsOn = "[File]CopyBaseImage DC02","[xVhdFile]CopyUnattendedXml DC02" #, '[xVMSwitch]InternalSwitch'
             Ensure = 'Present'
             Generation = 2
             MaximumMemory = $Node.MaximumMemory
@@ -401,7 +405,7 @@ configuration Lab01
         # then overwrite the VM with the Install.WIM
         File "CopyBaseImage App01"
         {
-            SourcePath = "C:\VMs\Base\Server2016\2016EvalGui.vhdx"
+            SourcePath = "C:\VMs\Source\Base\Server2016\2016EvalGui.vhdx"
             DestinationPath = "C:\VMs\App01\App01.vhdx"
             DependsOn = "[File]DestinationFolder App01"
         }
@@ -424,7 +428,7 @@ configuration Lab01
 
                 # xComputerMangement
                 MSFT_xFileDirectory {
-                    SourcePath      = 'C:\Program Files\WindowsPowerShell\Modules\xComputerManagement\3.1.0.0\'
+                    SourcePath      = 'C:\Program Files\WindowsPowerShell\Modules\xComputerManagement\4.1.0.0\.1.0.0\'
                     DestinationPath = "\Program Files\WindowsPowerShell\Modules\" 
                     type            = 'Directory'
                     Recurse         = $True
@@ -432,7 +436,7 @@ configuration Lab01
 
                 # Pending.mof
                 MSFT_xFileDirectory {
-                    SourcePath      = 'F:\DSCScripts\Lab01\App01\Localhost.mof'
+                    SourcePath      = "$RootFolder\App01\Localhost.mof"
                     DestinationPath = "\Windows\System32\Configuration\Pending.mof" 
                     force           = $True
 
@@ -440,7 +444,7 @@ configuration Lab01
 
                 # Pending.Meta.mof
                 MSFT_xFileDirectory {
-                    SourcePath      = 'F:\DSCScripts\Lab01\App01\Localhost.meta.mof'
+                    SourcePath      = "$RootFolder\App01\Localhost.meta.mof"
                     DestinationPath = "\Windows\System32\Configuration\metaconfig.mof" 
                     force           = $True
 
@@ -448,7 +452,7 @@ configuration Lab01
 
                 # xNetworking
                 MSFT_xFileDirectory {
-                    SourcePath      = 'C:\Program Files\WindowsPowerShell\Modules\xNetworking\5.3.0.0\'
+                    SourcePath      = 'C:\Program Files\WindowsPowerShell\Modules\xNetworking\5.7.0.0\.3.0.0\'
                     DestinationPath = "\Program Files\WindowsPowerShell\Modules\" 
                     type            = 'Directory'
                     Recurse         = $True
@@ -456,7 +460,7 @@ configuration Lab01
 
                 # xActiveDirectory
                 MSFT_xFileDirectory {
-                    SourcePath = 'C:\Program Files\WindowsPowerShell\Modules\xActiveDirectory\2.16.0.0\'
+                    SourcePath = 'C:\Program Files\WindowsPowerShell\Modules\xActiveDirectory\2.21.0.0\.16.0.0\'
                     DestinationPath = "\Program Files\WindowsPowerShell\Modules\" 
                     type    = 'Directory'
                     Recurse = $True
@@ -464,21 +468,21 @@ configuration Lab01
 
             <#
                 MSFT_xFileDirectory {
-                    SourcePath = 'F:\DSCScripts\Lab01\App01\Sources\'
+                    SourcePath = "$RootFolder\App01\Sources\"
                     DestinationPath = "\" 
                     type    = 'Directory'
                     Recurse = $True
                 }
 
                 MSFT_xFileDirectory {
-                    SourcePath = 'F:\DSCScripts\Lab01\App01\WebSite\'
+                    SourcePath = "$RootFolder\App01\WebSite\"
                     DestinationPath = "\WebSite\" 
                     type    = 'Directory'
                     Recurse = $True
                 }
 
                 MSFT_xFileDirectory {
-                    SourcePath = 'F:\DSCScripts\Lab01\App01\scripts\'
+                    SourcePath = "$RootFolder\App01\scripts\"
                     DestinationPath = "\Scripts\"
                     type = 'directory'
                     Ensure = 'Present'
@@ -493,8 +497,8 @@ configuration Lab01
         xVMHyperv "Create App01"
         {
             Name = 'App01'
-            VHDPath = "C:\VMs\App01\App01`.vhdx"
-            DependsOn = "[File]CopyBaseImage App01","[xVhdFile]CopyUnattendedXml App01" , '[xVMSwitch]InternalSwitch'
+            VHDPath = "C:\VMs\App01\App01.vhdx"
+            DependsOn = "[File]CopyBaseImage App01","[xVhdFile]CopyUnattendedXml App01" #, '[xVMSwitch]InternalSwitch'
             Ensure = 'Present'
             Generation = 2
             MaximumMemory = $Node.MaximumMemory
@@ -504,6 +508,7 @@ configuration Lab01
             SecureBoot = $Node.SecureBoot
             SwitchName = 'Switch-Internal'
             RestartIfNeeded = $Node.RestartIfNeeded
+            Path = 'c:\VMs\App01'
         }
     }
 }
