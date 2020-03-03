@@ -21,8 +21,8 @@ $NewWindowsDrive = 'I'
 Expand-WindowsImage -imagePath "$($MountedISO.DevicePath)sources\install.wim" -Index 4 -ApplyPath "$NewWindowsDrive`:"
 
 # WinRe tools partition
-Correct drive letters.
-I: in this case is the new expanded windows image from above
+# Correct drive letters.
+# I: in this case is the new expanded windows image from above
 $RecoveryDriveLetter = 'R'
 Get-Partition -DiskNumber $NewDiskNumber -PartitionNumber 1 | Format-Volume -FileSystem FAT32 -NewFileSystemLabel RECOVERY -Force -Confirm:$false
 Get-Partition -DiskNumber $NewDiskNumber -PartitionNumber 1 | Set-Partition -NewDriveLetter $RecoveryDriveLetter

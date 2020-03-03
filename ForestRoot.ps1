@@ -13,16 +13,18 @@ configuration ForestRoot
     param (
  
         [Parameter(Mandatory=$true)]
-        [PSCredential] $DomainCredentials
+        [PSCredential] $DomainCredentials,
+
+        [Parameter(Mandatory=$true)]
+        [string] $DomainName
     )
 
 
     Import-DscResource -ModuleName @{ModuleName="PSDesiredStateConfiguration";ModuleVersion="1.1"}
-    Import-DscResource -ModuleName @{ModuleName="xActiveDirectory";ModuleVersion="2.16.0.0"}
-    Import-DscResource -ModuleName @{ModuleName="xNetworking";ModuleVersion="5.3.0.0"
-    Import-DscResource -ModuleName @{ModuleName="xComputerManagement";ModuleVersion="3.1.0.0"}
-
-    $domainName        = 'one.com'
+    Import-DscResource -ModuleName @{ModuleName="xActiveDirectory";ModuleVersion="3.0.0.0"}
+    Import-DscResource -ModuleName @{ModuleName="xNetworking";ModuleVersion="5.7.0.0"}
+    Import-DscResource -ModuleName @{ModuleName="xComputerManagement";ModuleVersion="4.1.0.0"}
+    Import-DscResource -ModuleName @{ModuleName="xPendingReboot";ModuleVersion="0.4.0.0"}
 
     Node $AllNodes.NodeName
     {
@@ -132,4 +134,4 @@ configuration ForestRoot
     }
 }
 
-ForestRoot -ConfigurationData $ConfigurationData -DomainCredentials $([pscredential]::new('Administrator', $(ConvertTo-SecureString -String 'Pa55w0rd!101' -AsPlainText -Force)))
+ForestRoot -ConfigurationData $ConfigurationData -DomainCredentials $([pscredential]::new('Administrator', $(ConvertTo-SecureString -String 'Pa55w0rd!101' -AsPlainText -Force))) -
